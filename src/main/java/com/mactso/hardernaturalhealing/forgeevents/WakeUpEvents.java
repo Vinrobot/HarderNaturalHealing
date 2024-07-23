@@ -1,13 +1,12 @@
 package com.mactso.hardernaturalhealing.forgeevents;
 
 import com.mactso.hardernaturalhealing.config.MyConfig;
-
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 
-@Mod.EventBusSubscriber()
+@EventBusSubscriber()
 public class WakeUpEvents {
 	@SubscribeEvent
 	public static void onPlayerWakeUp(PlayerWakeUpEvent event) {

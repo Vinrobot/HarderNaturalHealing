@@ -5,11 +5,11 @@
 //import net.minecraft.entity.player.ServerPlayerEntity;
 //import net.minecraft.util.FoodStats;
 //import net.minecraft.world.server.ServerWorld;
-//import net.minecraftforge.event.TickEvent;
-//import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-//import net.minecraftforge.event.entity.player.PlayerEvent;
-//import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-//import net.minecraftforge.eventbus.api.SubscribeEvent;
+//import net.neoforged.neoforge.event.TickEvent;
+//import net.neoforged.neoforge.event.TickEvent.PlayerTickEvent;
+//import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+//import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+//import net.neoforged.bus.api.SubscribeEvent;
 //
 //public class PeacefulHungerHandler {
 //	static float satLev = 0.0f;

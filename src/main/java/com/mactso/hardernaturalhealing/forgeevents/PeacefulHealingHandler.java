@@ -1,24 +1,20 @@
 package com.mactso.hardernaturalhealing.forgeevents;
 
-import java.lang.reflect.Field;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.mactso.hardernaturalhealing.config.MyConfig;
 import com.mactso.hardernaturalhealing.utility.Utility;
-
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.coremod.api.ASMAPI;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.coremod.api.ASMAPI;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@Mod.EventBusSubscriber()
+import java.lang.reflect.Field;
+
+@EventBusSubscriber()
 public class PeacefulHealingHandler {
 
 	static float cSat = 0;
@@ -36,7 +32,8 @@ public class PeacefulHealingHandler {
 
 	private static Field tickTimer = null;
 	private static final Logger LOGGER = LogManager.getLogger();
-	static boolean timerAvailable = false;;
+	static boolean timerAvailable = false;
+
 	// FD: net/minecraft/world/food/FoodData/f_38699_
 	// net/minecraft/world/food/FoodData/tickTimer
 	static {
@@ -52,15 +49,24 @@ public class PeacefulHealingHandler {
 	}
 
 	@SubscribeEvent
+	public static void onPlayerHealing(PlayerTickEvent.Pre event) {
+		onPlayerHealing(event);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerHealing(PlayerTickEvent.Post event) {
+		onPlayerHealing(event);
+	}
+
 	public static void onPlayerHealing(PlayerTickEvent event) {
 
 		if (MyConfig.isPeacefulHunger()) {
-			FoodData fs = event.player.getFoodData();
-			Difficulty difficulty = event.player.level().getDifficulty();
-			if (event.phase == TickEvent.Phase.START) {
+			FoodData fs = event.getEntity().getFoodData();
+			Difficulty difficulty = event.getEntity().level().getDifficulty();
+			if (event instanceof PlayerTickEvent.Pre) {
 				MyConfig.setDebugLevel(0);
-				if (event.side == LogicalSide.CLIENT) {
-					cRegen = event.player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+				if (event.getEntity().level().isClientSide()) {
+					cRegen = event.getEntity().level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
 					cSat = fs.getSaturationLevel();
 					cExt = fs.getExhaustionLevel();
 					cFod = fs.getFoodLevel();
@@ -74,10 +80,10 @@ public class PeacefulHealingHandler {
 						LOGGER.error("Illegal Access: failed to get client FoodData tickTimer.");
 						e.printStackTrace();
 					}
-					Utility.debugMsg(2, "(" + event.player.tickCount + ") C START cTim:" + cTim + " cSat:" + cSat
+					Utility.debugMsg(2, "(" + event.getEntity().tickCount + ") C START cTim:" + cTim + " cSat:" + cSat
 							+ " cExt:" + cExt + " cFod:" + cFod + ".");
 				} else {
-					sRegen = event.player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+					sRegen = event.getEntity().level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
 					sSat = fs.getSaturationLevel();
 					sExt = fs.getExhaustionLevel();
 					sFod = fs.getFoodLevel();
@@ -92,20 +98,20 @@ public class PeacefulHealingHandler {
 						e.printStackTrace();
 					}
 
-					Utility.debugMsg(2, "(" + event.player.tickCount + ") S START sTim:" + sTim + " sSat:" + sSat
+					Utility.debugMsg(2, "(" + event.getEntity().tickCount + ") S START sTim:" + sTim + " sSat:" + sSat
 							+ " sExt:" + sExt + " sFod:" + sFod + ".");
 				}
 			}
 
-			if (event.phase == TickEvent.Phase.END) {
+			if (event instanceof PlayerTickEvent.Post) {
 				if (difficulty == Difficulty.PEACEFUL) {
 					MyConfig.setDebugLevel(0);
-					if (event.side == LogicalSide.CLIENT) {
-						Utility.debugMsg(2, "(" + event.player.tickCount + ") C xENDx cTim:" + cTim + " cSat:" + cSat
+					if (event.getEntity().level().isClientSide()) {
+						Utility.debugMsg(2, "(" + event.getEntity().tickCount + ") C xENDx cTim:" + cTim + " cSat:" + cSat
 								+ " cExt:" + cExt + " cFod:" + cFod + ".");
 						fs.setFoodLevel(cFod);
 					} else {
-						Utility.debugMsg(2, "(" + event.player.tickCount + ") S xENDx sTim:" + sTim + " sSat:" + sSat
+						Utility.debugMsg(2, "(" + event.getEntity().tickCount + ") S xENDx sTim:" + sTim + " sSat:" + sSat
 								+ " sExt:" + sExt + " sFod:" + sFod + ".");
 //						fs.foodLevel = sFod;
 						if ((sExt > fs.getExhaustionLevel()) && (sSat == 0) && (fs.getFoodLevel() > 0)) {
@@ -113,8 +119,8 @@ public class PeacefulHealingHandler {
 						}
 						if (fs.getFoodLevel() == 0) {
 							if (++sTim > 80) {
-								if (event.player.getHealth() > MyConfig.getMinimumStarvationHealth()) {
-									event.player.hurt(event.player.damageSources().starve(), 1.0F);
+								if (event.getEntity().getHealth() > MyConfig.getMinimumStarvationHealth()) {
+									event.getEntity().hurt(event.getEntity().damageSources().starve(), 1.0F);
 								}
 								sTim = 0;
 							}

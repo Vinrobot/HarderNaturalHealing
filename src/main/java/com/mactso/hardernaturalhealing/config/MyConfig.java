@@ -1,40 +1,35 @@
 package com.mactso.hardernaturalhealing.config;
 
+import com.mactso.hardernaturalhealing.Main;
+import com.mactso.hardernaturalhealing.utility.Utility;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mactso.hardernaturalhealing.Main;
-import com.mactso.hardernaturalhealing.utility.Utility;
-
-//import net.minecraft.world.entity.player.Player;
-
-
-
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Main.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class MyConfig {
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static final Common COMMON;
-	public static final ForgeConfigSpec COMMON_SPEC;
+	public static final ModConfigSpec COMMON_SPEC;
+
 	static {
-		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
 		COMMON_SPEC = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}
 
 	public static void pushDebugValue() {
-		Utility.debugMsg(1,"hardernaturalhealing debugLevel:" + MyConfig.debugLevel);
+		Utility.debugMsg(1, "hardernaturalhealing debugLevel:" + MyConfig.debugLevel);
 		COMMON.debugLevel.set(MyConfig.debugLevel);
 	}
-	
+
 	public static void setHealingPerSecond(double healingPerSecond) {
 		MyConfig.healingPerSecond = healingPerSecond;
 	}
@@ -88,17 +83,17 @@ public class MyConfig {
 	public static int getHealthAfterDeath() {
 		return healthAfterDeath;
 	}
-	
+
 	public static void setHealthAfterDeath(int newValue) {
 		MyConfig.healthAfterDeath = newValue;
 		COMMON.healthAfterDeath.set(newValue);
 	}
-	
-	
+
+
 	public static int getHungerAfterDeath() {
 		return hungerAfterDeath;
 	}
-	
+
 	public static void setHungerAfterDeath(int newValue) {
 		MyConfig.hungerAfterDeath = newValue;
 		COMMON.hungerAfterDeath.set(newValue);
@@ -115,20 +110,20 @@ public class MyConfig {
 	public static double getWakeupHealingAmount() {
 		return wakeupHealingAmount;
 	}
-	
+
 	public static int getAttackHealingDelayTicks() {
 		return attackHealingDelayTicks;
 	}
-	
+
 	public static double getMaxBonusHitPointTotems() {
 		return maxBonusHitPointTotems;
-	}	
+	}
 
 	public static int debugLevel;
 	private static double healingPerSecond;
 	private static double maxBonusHitPointTotems;
 	private static int attackHealingDelayTicks;
-	
+
 	private static int healthAfterDeath;
 	private static int hungerAfterDeath;
 	private static double minimumFoodHealingLevel;
@@ -137,7 +132,7 @@ public class MyConfig {
 	private static int minimumStarvationHealth;
 	private static boolean peacefulHunger;
 	private static double extraExhaustionWhenHurt;
-	
+
 	public static double getExtraExhaustionWhenHurt() {
 		return extraExhaustionWhenHurt;
 	}
@@ -158,7 +153,6 @@ public class MyConfig {
 	}
 
 
-
 	public static void bakeConfig() {
 
 		debugLevel = COMMON.debugLevel.get();
@@ -171,8 +165,8 @@ public class MyConfig {
 		wakeupHealingAmount = COMMON.wakeupHealingAmount.get();
 		minimumStarvationHealth = COMMON.minimumStarvationHealth.get();
 		peacefulHunger = COMMON.peacefulHunger.get();
-		healthAfterDeath= COMMON.healthAfterDeath.get();
-		hungerAfterDeath= COMMON.hungerAfterDeath.get();
+		healthAfterDeath = COMMON.healthAfterDeath.get();
+		hungerAfterDeath = COMMON.hungerAfterDeath.get();
 		if (debugLevel > 0) {
 			System.out.println("HarderNaturalHealing Debug: " + debugLevel);
 		}
@@ -193,7 +187,7 @@ public class MyConfig {
 		public final IntValue minimumStarvationHealth;
 		public final BooleanValue peacefulHunger;
 
-		public Common(ForgeConfigSpec.Builder builder) {
+		public Common(ModConfigSpec.Builder builder) {
 			builder.push("Harder Natural Healing Control Values");
 
 			debugLevel = builder.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
@@ -208,7 +202,7 @@ public class MyConfig {
 					.translation(Main.MODID + ".config." + "maxBonusHitPointTotems")
 					.defineInRange("maxBonusHitPointTotems", () -> 300, 0, 1200);
 
-			
+
 			healingPerSecond = builder.comment("healingPerSecond")
 					.translation(Main.MODID + ".config." + "healingPerSecond")
 					.defineInRange("healingPerSecond", () -> 0.25, 0.0, 10.0);
@@ -216,12 +210,12 @@ public class MyConfig {
 			healthAfterDeath = builder.comment("healthAfterDeath")
 					.translation(Main.MODID + ".config." + "healthAfterDeath")
 					.defineInRange("healthAfterDeath", () -> 20, 0, 20);
-			
+
 			hungerAfterDeath = builder.comment("hungerAfterDeath")
 					.translation(Main.MODID + ".config." + "hungerAfterDeath")
 					.defineInRange("hungerAfterDeath", () -> 20, 0, 20);
 
-			
+
 			minimumFoodHealingLevel = builder.comment("minimumFoodHealingLevel")
 					.translation(Main.MODID + ".config." + "minimumFoodHealingLevel")
 					.defineInRange("minimumFoodHealingLevel", () -> 16.0, 0.0, 22.0);
@@ -233,62 +227,62 @@ public class MyConfig {
 			wakeupHealingAmount = builder.comment("wakeupHealingAmount")
 					.translation(Main.MODID + ".config." + "wakeupHealingAmount")
 					.defineInRange("wakeupHealingAmount", () -> 4.0, 0.0, 10.0);
-			
+
 			extraExhaustionWhenHurt = builder.comment("extraExhaustionWhenHurt")
 					.translation(Main.MODID + ".config." + "extraExhaustionWhenHurt")
 					.defineInRange("extraExhaustionWhenHurt", () -> 0.0125, 0.0, 1.0);
-					
+
 			minimumStarvationHealth = builder.comment("minimum hit points for peaceful mode starvation.")
 					.translation(Main.MODID + ".config." + "minimumStarvationHealth")
-					.defineInRange("minimumStarvationHealth", () -> 0, 0 , 20);
+					.defineInRange("minimumStarvationHealth", () -> 0, 0, 20);
 
 			peacefulHunger = builder
 					.comment("Can the player get hungry and maybe even starve to death in peaceful mode.")
 					.translation(Main.MODID + ".config." + "peacefulHunger")
 					.define("peacefulHunger", true);
-			
+
 			builder.pop();
 		}
 	}
 
 	// update config when changed by commands
 	public static void pushPeacefulHunger() {
-		COMMON.peacefulHunger.set(MyConfig.isPeacefulHunger());		
+		COMMON.peacefulHunger.set(MyConfig.isPeacefulHunger());
 	}
 
 	public static void pushHealingPerSecond() {
-		COMMON.healingPerSecond.set(MyConfig.getHealingPerSecond());			
+		COMMON.healingPerSecond.set(MyConfig.getHealingPerSecond());
 	}
 
 	public static void pushAttackHealingDelayTicks() {
-		COMMON.attackHealingDelayTicks.set(MyConfig.getAttackHealingDelayTicks());			
+		COMMON.attackHealingDelayTicks.set(MyConfig.getAttackHealingDelayTicks());
 	}
 
 	public static void pushHungerAfterDeath() {
-		COMMON.hungerAfterDeath.set(MyConfig.getHungerAfterDeath());		
+		COMMON.hungerAfterDeath.set(MyConfig.getHungerAfterDeath());
 	}
-	
+
 	public static void pushMinimumFoodHealingLevel() {
-		COMMON.minimumFoodHealingLevel.set(MyConfig.getMinimumFoodHealingLevel());			
+		COMMON.minimumFoodHealingLevel.set(MyConfig.getMinimumFoodHealingLevel());
 	}
 
 	public static void pushHealingExhaustionCost() {
-		COMMON.healingExhaustionCost.set(MyConfig.getHealingExhaustionCost());			
+		COMMON.healingExhaustionCost.set(MyConfig.getHealingExhaustionCost());
 	}
-	
+
 	public static void pushWakeupHealingAmount() {
-		COMMON.wakeupHealingAmount.set(MyConfig.getWakeupHealingAmount());			
-		
+		COMMON.wakeupHealingAmount.set(MyConfig.getWakeupHealingAmount());
+
 	}
+
 	public static void pushExtraExhaustionWhenHurt() {
-		COMMON.extraExhaustionWhenHurt.set(MyConfig.getExtraExhaustionWhenHurt());			
-		
+		COMMON.extraExhaustionWhenHurt.set(MyConfig.getExtraExhaustionWhenHurt());
+
 	}
 
 	public static void pushMinimumStarvationHealth() {
-		COMMON.minimumStarvationHealth.set(MyConfig.getMinimumStarvationHealth());			
+		COMMON.minimumStarvationHealth.set(MyConfig.getMinimumStarvationHealth());
 	}
 
 
-	
 }

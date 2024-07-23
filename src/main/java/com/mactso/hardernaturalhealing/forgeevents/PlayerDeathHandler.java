@@ -1,17 +1,16 @@
 package com.mactso.hardernaturalhealing.forgeevents;
 
 import com.mactso.hardernaturalhealing.config.MyConfig;
-
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@Mod.EventBusSubscriber()
+@EventBusSubscriber()
 public class PlayerDeathHandler {
 
 	@SubscribeEvent
-	public static void onPlayerDeath(Clone event) {
+	public static void onPlayerDeath(PlayerEvent.Clone event) {
 		Player p = event.getEntity();
 		int v = MyConfig.getHealthAfterDeath();
 		if (event.isWasDeath()) {

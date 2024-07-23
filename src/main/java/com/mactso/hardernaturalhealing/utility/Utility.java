@@ -1,21 +1,19 @@
 package com.mactso.hardernaturalhealing.utility;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.mactso.hardernaturalhealing.config.MyConfig;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Utility {
-	
+
 	private static final Logger LOGGER = LogManager.getLogger();
-	
+
 	public static void debugMsg(int level, String dMsg) {
 
 		if (MyConfig.getDebugLevel() > level - 1) {
@@ -35,8 +33,8 @@ public class Utility {
 	public static void debugMsg(int level, LivingEntity le, String dMsg) {
 
 		if (MyConfig.getDebugLevel() > level - 1) {
-			LOGGER.info("L" + level + " (" 
-					+ le.blockPosition().getX() + "," 
+			LOGGER.info("L" + level + " ("
+					+ le.blockPosition().getX() + ","
 					+ le.blockPosition().getY() + ","
 					+ le.blockPosition().getZ() + "): " + dMsg);
 		}
